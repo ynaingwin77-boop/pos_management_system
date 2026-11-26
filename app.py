@@ -1,5 +1,5 @@
 import database as db 
-import os
+
 import sqlite3
 
 def add_category(category_name):
@@ -68,9 +68,12 @@ def delete_category(category_id):
     try:
         with conn:
             cur = conn.execute("DELETE FROM CATEGORIES WHERE categor_id = ?", (category_id,))
+            
             if cur.rowcount == 0:
                 print(f"No category found with ID {category_id}.")
             else:
+                #fixed 
+                conn.execute("DELETE FROM PRODUCTS WHERE category_id = ?", (category_id,))
                 print(f"Category ID {category_id} deleted successfully.")
     except sqlite3.Error as e:
         print("Database error:", e)
@@ -176,6 +179,10 @@ def main():
 
         if choice == "1":
             category_name = input("Enter category name: ")
+            #fixed 
+            if category_name == db.get_category_name(category_name):
+                print(f"Category '{category_name}' already exists.")
+                return
             add_category(category_name)
         elif choice == "2":
             view_all_categories()
